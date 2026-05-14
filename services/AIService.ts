@@ -213,7 +213,7 @@ See why the reviews are calling it "the best purchase of 2025."`,
   }
 
   // ─── Enhanced Mock: Analytics Insight ─────────────────────────────────
-  private static mockAnalyticsInsight(_params?: any) {
+  private static mockAnalyticsInsight(_?: any) {
     const insights = [
       {
         metric: 'Revenue',

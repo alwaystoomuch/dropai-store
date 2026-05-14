@@ -517,7 +517,7 @@ export class EmailService {
   }
 
   // ─── Fallback ────────────────────────────────────────────────────────
-  private static fallbackEmail(/* data: Record<string, any> */): string {
+  private static fallbackEmail(data: Record<string, any>): string {
     return `<!DOCTYPE html>
 <html>
 <head>

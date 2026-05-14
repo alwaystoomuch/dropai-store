@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { Mail, Send, Eye, Users, Clock, CheckCircle, XCircle, Loader2, Plus, X, MessageSquare, TrendingUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Mail, Send, Eye, Users, Clock, CheckCircle, XCircle, Loader2, Plus, X } from 'lucide-react'
 import DashboardLayout from '@/components/DashboardLayout'
 
 interface EmailRecord {
@@ -62,7 +62,35 @@ export default function EmailsPage() {
   const [body, setBody] = useState('')
   const [campaignType, setCampaignType] = useState('welcome')
 
-  const fetchEmails = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false
+    async function loadEmails() {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch('/api/emails/history')
+        if (!res.ok) {
+          const text = await res.text()
+          throw new Error(text || `HTTP ${res.status}`)
+        }
+        const data = await res.json()
+        if (!cancelled) {
+          setEmails(Array.isArray(data) ? data : [])
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load emails')
+          setEmails([])
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    loadEmails()
+    return () => { cancelled = true }
+  }, [])
+
+  const refetchEmails = async () => {
     setLoading(true)
     setError(null)
     try {
@@ -79,11 +107,7 @@ export default function EmailsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
-
-  useEffect(() => {
-    fetchEmails()
-  }, [fetchEmails])
+  }
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -112,7 +136,7 @@ export default function EmailsPage() {
       setTimeout(() => {
         setShowModal(false)
         setSendSuccess(null)
-        fetchEmails()
+        refetchEmails()
       }, 1500)
     } catch (err) {
       setSendSuccess(null)
@@ -192,7 +216,7 @@ export default function EmailsPage() {
           <p className="text-red-600 font-medium mb-1">Failed to load emails</p>
           <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">{error}</p>
           <button
-            onClick={fetchEmails}
+            onClick={refetchEmails}
             className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-2"
           >
             <Loader2 className="w-4 h-4" />
