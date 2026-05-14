@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig: NextConfig & Record<string, any> = {
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors. Set to false for stricter enforcement.
     ignoreDuringBuilds: true,
   },
 };
