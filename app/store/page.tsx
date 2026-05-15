@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Droplets, Star, Loader2, CheckCircle } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
 
 const products = [
   { id: 'prod-001', name: 'Wireless Bluetooth Earbuds', price: 39.99, category: 'Tech Accessories', rating: 4.8, sales: 342, emoji: '🎧', badge: 'Best Seller', desc: 'Premium wireless earbuds with noise cancellation, 30hr battery life, and IPX5 waterproof rating. Crystal clear sound with deep bass.' },
@@ -34,6 +35,13 @@ const colors = [
 export default function StorePage() {
   const [buyingId, setBuyingId] = useState<string | null>(null)
   const [message, setMessage] = useState<{ text: string; success: boolean } | null>(null)
+  const { addItem, totalItems } = useCart()
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addItem({ id: product.id, name: product.name, price: product.price, quantity: 1, emoji: product.emoji })
+    setMessage({ text: `${product.name} added to cart!`, success: true })
+    setTimeout(() => setMessage(null), 2000)
+  }
 
   const handleBuy = async (product: typeof products[0]) => {
     setBuyingId(product.id)
@@ -73,6 +81,14 @@ export default function StorePage() {
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-sm text-slate-600 hover:text-slate-900">Dashboard</Link>
             <Link href="/" className="text-sm text-slate-600 hover:text-slate-900">Home</Link>
+            <Link href="/store/cart" className="relative">
+              <ShoppingCart className="w-5 h-5 text-slate-600 hover:text-slate-900" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       </header>
@@ -111,35 +127,39 @@ export default function StorePage() {
               
               {/* Content */}
               <div className="p-4 flex flex-col flex-1">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{product.category}</span>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span className="text-[11px] text-slate-500">{product.rating}</span>
+                <Link href={`/store/${product.id}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{product.category}</span>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <span className="text-[11px] text-slate-500">{product.rating}</span>
+                    </div>
                   </div>
-                </div>
-                
-                <h3 className="text-sm font-semibold text-slate-900 mt-1">{product.name}</h3>
-                
-                <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 flex-1">{product.desc}</p>
+                  
+                  <h3 className="text-sm font-semibold text-slate-900 mt-1">{product.name}</h3>
+                  
+                  <p className="text-xs text-slate-500 mt-1.5 line-clamp-2">{product.desc}</p>
+                </Link>
                 
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                   <div>
                     <span className="text-lg font-bold text-slate-900">${product.price}</span>
                     <span className="text-xs text-slate-400 ml-1.5 line-through">${(product.price * 1.4).toFixed(0)}</span>
                   </div>
-                  <button
-                    onClick={() => handleBuy(product)}
-                    disabled={buyingId === product.id}
-                    className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 shadow-sm hover:shadow-md"
-                  >
-                    {buyingId === product.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ShoppingCart className="w-4 h-4" />
-                    )}
-                    {buyingId === product.id ? '...' : 'Buy Now'}
-                  </button>
+                  <div className="flex gap-1.5">
+                    <Link
+                      href={`/store/${product.id}`}
+                      className="text-xs text-indigo-600 hover:text-indigo-500 font-medium px-2 py-2"
+                    >
+                      Details
+                    </Link>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all"
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
