@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Package, ShoppingCart, Truck,
-  Bot, BarChart3, Mail, Droplets,
+  Bot, BarChart3, Mail, Droplets, Upload,
 } from 'lucide-react'
 import { NAV_ITEMS, APP_NAME } from '@/lib/constants'
 import clsx from 'clsx'
@@ -17,6 +17,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Bot: <Bot className="w-5 h-5" />,
   BarChart3: <BarChart3 className="w-5 h-5" />,
   Mail: <Mail className="w-5 h-5" />,
+  Upload: <Upload className="w-5 h-5" />,
 }
 
 export default function Sidebar() {
@@ -66,6 +67,24 @@ export default function Sidebar() {
             </Link>
           )
         })}
+        <p className="px-3 mt-6 mb-2 text-[11px] font-semibold text-slate-500 uppercase tracking-widest">
+          Tools
+        </p>
+        <Link
+          href="/dashboard/import"
+          className={clsx(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+            pathname === '/dashboard/import'
+              ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/20'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+          )}
+        >
+          <span className="text-slate-500"><Upload className="w-5 h-5" /></span>
+          Import Products
+          {pathname === '/dashboard/import' && (
+            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400" />
+          )}
+        </Link>
       </nav>
 
       {/* Bottom Section */}
