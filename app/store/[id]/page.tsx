@@ -24,10 +24,22 @@ const products = [
   { id: 'prod-015', name: 'LED Strip Lights 10ft', price: 18.99, category: 'Home Goods', rating: 4.7, sales: 267, emoji: '✨', badge: 'Hot', desc: 'RGB LED strip lights with remote control. Music sync mode, 16 colors, 4 brightness levels, and 4 dynamic modes. Adhesive backing for easy installation anywhere.', features: ['Music Sync', '16 Colors', 'Remote Control', '10ft Length', 'Adhesive Backing', '4 Dynamic Modes'] },
 ]
 
-const colors: Record<string, string> = {
-  'Tech Accessories': 'from-blue-100 to-indigo-100',
-  'Health & Wellness': 'from-emerald-100 to-teal-100',
-  'Home Goods': 'from-amber-100 to-orange-100',
+const images: Record<string, string> = {
+  'prod-001': 'https://images.unsplash.com/photo-1590658268037-6bf12f032f35?w=800&q=80',
+  'prod-002': 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80',
+  'prod-003': 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&q=80',
+  'prod-004': 'https://images.unsplash.com/photo-1507473885765-e6ed057ab6fe?w=800&q=80',
+  'prod-005': 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80',
+  'prod-006': 'https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=800&q=80',
+  'prod-007': 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=800&q=80',
+  'prod-008': 'https://images.unsplash.com/photo-1602928298849-325cec8771c0?w=800&q=80',
+  'prod-009': 'https://images.unsplash.com/photo-1594226801341-41427b4e5c6c?w=800&q=80',
+  'prod-010': 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&q=80',
+  'prod-011': 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80',
+  'prod-012': 'https://images.unsplash.com/photo-1600612253971-422e7f7faeb6?w=800&q=80',
+  'prod-013': 'https://images.unsplash.com/photo-1610824352934-c10d87b700cc?w=800&q=80',
+  'prod-014': 'https://images.unsplash.com/photo-1532375810709-0b1f938333e5?w=800&q=80',
+  'prod-015': 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80',
 }
 
 export default function ProductDetailPage() {
@@ -88,8 +100,8 @@ export default function ProductDetailPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Image */}
-          <div className={`aspect-square rounded-2xl bg-gradient-to-br ${colors[product.category] || 'from-slate-100 to-slate-200'} flex items-center justify-center text-8xl`}>
-            {product.emoji}
+          <div className="aspect-square rounded-2xl bg-slate-100 overflow-hidden">
+            <img src={images[product.id]} alt={product.name} className="w-full h-full object-cover" />
           </div>
 
           {/* Details */}
