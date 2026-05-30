@@ -24,9 +24,27 @@ const products = [
 ]
 
 const bgColors: Record<string, string> = {
-  'Tech Accessories': 'from-blue-200 to-indigo-200',
-  'Health & Wellness': 'from-emerald-200 to-teal-200',
-  'Home Goods': 'from-amber-200 to-orange-200',
+  'Tech Accessories': 'from-blue-400 via-indigo-300 to-purple-400',
+  'Health & Wellness': 'from-emerald-400 via-teal-300 to-cyan-400',
+  'Home Goods': 'from-amber-400 via-orange-300 to-rose-400',
+}
+
+const productBgGradients: Record<string, string> = {
+  'prod-001': 'from-indigo-500 to-purple-600',
+  'prod-002': 'from-blue-500 to-cyan-600',
+  'prod-003': 'from-sky-400 to-blue-500',
+  'prod-004': 'from-amber-400 to-orange-500',
+  'prod-005': 'from-cyan-400 to-teal-500',
+  'prod-006': 'from-emerald-400 to-green-500',
+  'prod-007': 'from-teal-400 to-emerald-500',
+  'prod-008': 'from-violet-400 to-purple-500',
+  'prod-009': 'from-amber-500 to-yellow-600',
+  'prod-010': 'from-slate-500 to-gray-600',
+  'prod-011': 'from-indigo-400 to-blue-500',
+  'prod-012': 'from-pink-400 to-rose-500',
+  'prod-013': 'from-gray-400 to-slate-500',
+  'prod-014': 'from-sky-500 to-indigo-600',
+  'prod-015': 'from-fuchsia-400 to-pink-500',
 }
 
 export default function StorePage() {
@@ -90,15 +108,9 @@ export default function StorePage() {
           {filtered.map((product) => (
             <div key={product.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all group flex flex-col">
               <Link href={`/store/${product.id}`}>
-                <div className={`aspect-[4/3] bg-gradient-to-br ${bgColors[product.category] || 'from-slate-200 to-slate-300'} relative overflow-hidden flex items-center justify-center`}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-5xl">${product.emoji}</span>` }}
-                  />
-                  {product.badge && <span className="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">{product.badge}</span>}
+                <div className={`aspect-[4/3] bg-gradient-to-br ${productBgGradients[product.id]} relative overflow-hidden flex items-center justify-center`}>
+                  <span className="text-6xl group-hover:scale-125 transition-transform duration-500 drop-shadow-lg">{product.emoji}</span>
+                  {product.badge && <span className="absolute top-3 left-3 bg-white/90 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">{product.badge}</span>}
                 </div>
               </Link>
               <div className="p-4 flex flex-col flex-1">

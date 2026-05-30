@@ -24,22 +24,22 @@ const products = [
   { id: 'prod-015', name: 'LED Strip Lights 10ft', price: 18.99, category: 'Home Goods', rating: 4.7, sales: 267, emoji: '✨', badge: 'Hot', desc: 'RGB LED strip lights with remote control. Music sync mode, 16 colors, 4 brightness levels, and 4 dynamic modes. Adhesive backing for easy installation anywhere.', features: ['Music Sync', '16 Colors', 'Remote Control', '10ft Length', 'Adhesive Backing', '4 Dynamic Modes'] },
 ]
 
-const images: Record<string, string> = {
-  'prod-001': 'https://picsum.photos/seed/earbuds/800/600',
-  'prod-002': 'https://picsum.photos/seed/charger/800/600',
-  'prod-003': 'https://picsum.photos/seed/stand/800/600',
-  'prod-004': 'https://picsum.photos/seed/lamp/800/600',
-  'prod-005': 'https://picsum.photos/seed/bottle/800/600',
-  'prod-006': 'https://picsum.photos/seed/bands/800/600',
-  'prod-007': 'https://picsum.photos/seed/yoga/800/600',
-  'prod-008': 'https://picsum.photos/seed/diffuser/800/600',
-  'prod-009': 'https://picsum.photos/seed/cutting/800/600',
-  'prod-010': 'https://picsum.photos/seed/wallet/800/600',
-  'prod-011': 'https://picsum.photos/seed/sanitizer/800/600',
-  'prod-012': 'https://picsum.photos/seed/steamer/800/600',
-  'prod-013': 'https://picsum.photos/seed/mount/800/600',
-  'prod-014': 'https://picsum.photos/seed/pillow/800/600',
-  'prod-015': 'https://picsum.photos/seed/lights/800/600',
+const images: Record<string, { gradient: string; emoji: string }> = {
+  'prod-001': { gradient: 'from-indigo-500 to-purple-600', emoji: '🎧' },
+  'prod-002': { gradient: 'from-blue-500 to-cyan-600', emoji: '🔋' },
+  'prod-003': { gradient: 'from-sky-400 to-blue-500', emoji: '📱' },
+  'prod-004': { gradient: 'from-amber-400 to-orange-500', emoji: '💡' },
+  'prod-005': { gradient: 'from-cyan-400 to-teal-500', emoji: '💧' },
+  'prod-006': { gradient: 'from-emerald-400 to-green-500', emoji: '🏋️' },
+  'prod-007': { gradient: 'from-teal-400 to-emerald-500', emoji: '🧘' },
+  'prod-008': { gradient: 'from-violet-400 to-purple-500', emoji: '🌸' },
+  'prod-009': { gradient: 'from-amber-500 to-yellow-600', emoji: '🪵' },
+  'prod-010': { gradient: 'from-slate-500 to-gray-600', emoji: '👛' },
+  'prod-011': { gradient: 'from-indigo-400 to-blue-500', emoji: '🦠' },
+  'prod-012': { gradient: 'from-pink-400 to-rose-500', emoji: '🌿' },
+  'prod-013': { gradient: 'from-gray-400 to-slate-500', emoji: '🧲' },
+  'prod-014': { gradient: 'from-sky-500 to-indigo-600', emoji: '😴' },
+  'prod-015': { gradient: 'from-fuchsia-400 to-pink-500', emoji: '✨' },
 }
 
 export default function ProductDetailPage() {
@@ -100,8 +100,8 @@ export default function ProductDetailPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Image */}
-          <div className="aspect-square rounded-2xl bg-slate-100 overflow-hidden">
-            <img src={images[product.id]} alt={product.name} className="w-full h-full object-cover" />
+          <div className={`aspect-square rounded-2xl bg-gradient-to-br ${images[product.id]?.gradient || 'from-slate-400 to-slate-500'} flex items-center justify-center text-8xl`}>
+            <span className="drop-shadow-lg">{images[product.id]?.emoji || '📦'}</span>
           </div>
 
           {/* Details */}
