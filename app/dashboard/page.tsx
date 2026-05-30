@@ -1,94 +1,96 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { DollarSign, ShoppingCart, Package, TrendingUp, ArrowUpRight, Activity, Clock } from 'lucide-react'
 import Header from '@/components/Header'
 import StatsCard from '@/components/StatsCard'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-
-const revenueData = [
-  { name: 'Jan', revenue: 12500, orders: 145 },
-  { name: 'Feb', revenue: 18200, orders: 210 },
-  { name: 'Mar', revenue: 15800, orders: 185 },
-  { name: 'Apr', revenue: 22100, orders: 260 },
-  { name: 'May', revenue: 24850, orders: 290 },
-  { name: 'Jun', revenue: 23500, orders: 275 },
-]
-
-const recentOrders = [
-  { id: '#ORD-001', customer: 'Sarah Johnson', product: 'Wireless Earbuds', amount: '$89.99', status: 'Delivered', date: '2 min ago' },
-  { id: '#ORD-002', customer: 'Mike Chen', product: 'Portable Charger', amount: '$49.99', status: 'Shipped', date: '15 min ago' },
-  { id: '#ORD-003', customer: 'Emma Williams', product: 'Phone Stand', amount: '$24.99', status: 'Processing', date: '1 hour ago' },
-  { id: '#ORD-004', customer: 'James Brown', product: 'LED Desk Lamp', amount: '$59.99', status: 'Shipped', date: '2 hours ago' },
-  { id: '#ORD-005', customer: 'Lisa Davis', product: 'Yoga Mat', amount: '$39.99', status: 'Pending', date: '3 hours ago' },
-]
-
-const statusColors: Record<string, string> = {
-  'Delivered': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'Shipped': 'bg-blue-50 text-blue-700 border-blue-200',
-  'Processing': 'bg-amber-50 text-amber-700 border-amber-200',
-  'Pending': 'bg-slate-50 text-slate-600 border-slate-200',
-}
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-4">
-        <p className="text-sm font-semibold text-slate-900 mb-2">{label}</p>
-        {payload.map((entry: any, idx: number) => (
-          <div key={idx} className="flex items-center gap-2 text-sm">
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-600">{entry.name}:</span>
-            <span className="font-medium text-slate-900">
-              {entry.name === 'Revenue' ? `${entry.value.toLocaleString()}` : entry.value}
-            </span>
-          </div>
-        ))}
-      </div>
-    )
-  }
-  return null
-}
+import clsx from 'clsx'
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState({ totalRevenue: 0, totalOrders: 0, totalProducts: 0, avgOrderValue: 0 })
+  const [recentOrders, setRecentOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/dashboard').then(r => r.json()),
+      fetch('/api/orders').then(r => r.json()),
+    ]).then(([statsData, ordersData]) => {
+      setStats(statsData)
+      setRecentOrders((ordersData || []).slice(0, 5))
+    }).finally(() => setLoading(false))
+  }, [])
+
+  // Generate chart data from stats
+  const chartData = [
+    { name: 'Week 1', revenue: Math.round(stats.totalRevenue * 0.15), orders: Math.round(stats.totalOrders * 0.18) },
+    { name: 'Week 2', revenue: Math.round(stats.totalRevenue * 0.22), orders: Math.round(stats.totalOrders * 0.24) },
+    { name: 'Week 3', revenue: Math.round(stats.totalRevenue * 0.28), orders: Math.round(stats.totalOrders * 0.26) },
+    { name: 'Week 4', revenue: Math.round(stats.totalRevenue * 0.35), orders: Math.round(stats.totalOrders * 0.32) },
+  ]
+
+  const statusColors: Record<string, string> = {
+    delivered: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    shipped: 'bg-blue-50 text-blue-700 border-blue-200',
+    confirmed: 'bg-amber-50 text-amber-700 border-amber-200',
+    pending: 'bg-slate-50 text-slate-600 border-slate-200',
+    returned: 'bg-red-50 text-red-700 border-red-200',
+    cancelled: 'bg-red-50 text-red-700 border-red-200',
+  }
+
+  const timeAgo = (date: string) => {
+    const diff = Date.now() - new Date(date).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 60) return `${mins}m ago`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return `${hrs}h ago`
+    return `${Math.floor(hrs / 24)}d ago`
+  }
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-4">
+          <p className="text-sm font-semibold text-slate-900 mb-2">{label}</p>
+          {payload.map((entry: any, idx: number) => (
+            <div key={idx} className="flex items-center gap-2 text-sm">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-slate-600">{entry.name}:</span>
+              <span className="font-medium text-slate-900">{entry.name === 'Revenue' ? `$${entry.value.toLocaleString()}` : entry.value}</span>
+            </div>
+          ))}
+        </div>
+      )
+    }
+    return null
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Header title="Dashboard" />
+        <div className="p-8 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1,2,3,4].map(i => <div key={i} className="bg-white rounded-xl border border-slate-200 p-6"><div className="skeleton h-20 w-full" /></div>)}
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <Header title="Dashboard" />
       <div className="p-8 animate-fade-in">
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Total Revenue"
-            value={24850}
-            change={12.5}
-            icon={<DollarSign className="w-6 h-6" />}
-            color="green"
-          />
-          <StatsCard
-            title="Total Orders"
-            value={342}
-            change={8.2}
-            icon={<ShoppingCart className="w-6 h-6" />}
-            color="blue"
-          />
-          <StatsCard
-            title="Active Products"
-            value={30}
-            change={0}
-            icon={<Package className="w-6 h-6" />}
-            color="purple"
-          />
-          <StatsCard
-            title="Avg Order Value"
-            value="$72.66"
-            change={-2.1}
-            icon={<TrendingUp className="w-6 h-6" />}
-            color="orange"
-          />
+          <StatsCard title="Total Revenue" value={stats.totalRevenue} change={12.5} icon={<DollarSign className="w-6 h-6" />} color="green" />
+          <StatsCard title="Total Orders" value={stats.totalOrders} change={8.2} icon={<ShoppingCart className="w-6 h-6" />} color="blue" />
+          <StatsCard title="Active Products" value={stats.totalProducts} change={0} icon={<Package className="w-6 h-6" />} color="purple" />
+          <StatsCard title="Avg Order Value" value={`$${stats.avgOrderValue.toFixed(2)}`} change={-2.1} icon={<TrendingUp className="w-6 h-6" />} color="orange" />
         </div>
 
-        {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Chart */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -108,7 +110,7 @@ export default function DashboardPage() {
             </div>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
                   <defs>
                     <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
@@ -126,7 +128,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Recent Orders */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -139,45 +140,39 @@ export default function DashboardPage() {
               </span>
             </div>
             <div className="space-y-3">
-              {recentOrders.map((order, idx) => (
-                <div
-                  key={order.id}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className={clsx(
-                      'w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold',
-                      idx === 0 ? 'bg-emerald-50 text-emerald-600' :
-                      idx === 1 ? 'bg-blue-50 text-blue-600' :
-                      idx === 2 ? 'bg-amber-50 text-amber-600' :
-                      'bg-slate-50 text-slate-600'
-                    )}>
-                      {order.customer.charAt(0)}{order.customer.split(' ')[1]?.charAt(0)}
+              {recentOrders.length === 0 ? (
+                <p className="text-sm text-slate-400 text-center py-8">No orders yet</p>
+              ) : (
+                recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-600">
+                        {order.customer_name?.charAt(0)}{order.customer_name?.split(' ')[1]?.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{order.customer_name}</p>
+                        <p className="text-xs text-slate-500 truncate">${order.amount?.toFixed(2)}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 truncate">{order.customer}</p>
-                      <p className="text-xs text-slate-500 truncate">{order.product} &middot; {order.amount}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className={clsx(
-                      'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border',
-                      statusColors[order.status] || 'bg-slate-50 text-slate-600 border-slate-200'
-                    )}>
-                      {order.status}
-                    </span>
-                    <div className="flex items-center gap-1 text-xs text-slate-400">
-                      <Clock className="w-3 h-3" />
-                      {order.date}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <span className={clsx(
+                        'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border capitalize',
+                        statusColors[order.status] || 'bg-slate-50 text-slate-600 border-slate-200'
+                      )}>
+                        {order.status}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        {timeAgo(order.created_at)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
 
-        {/* AI Assistant Quick Ask */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
@@ -203,10 +198,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2 mt-3">
               <span className="text-xs text-slate-400">Quick suggestions:</span>
               {['Revenue trends', 'Top products', 'Low stock alerts'].map((suggestion) => (
-                <button
-                  key={suggestion}
-                  className="text-xs px-3 py-1 rounded-full bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-100 transition-colors"
-                >
+                <button key={suggestion} className="text-xs px-3 py-1 rounded-full bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-100 transition-colors">
                   {suggestion}
                 </button>
               ))}
@@ -216,8 +208,4 @@ export default function DashboardPage() {
       </div>
     </>
   )
-}
-
-function clsx(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(' ')
 }
