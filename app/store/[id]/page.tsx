@@ -25,21 +25,21 @@ const products = [
 ]
 
 const images: Record<string, string> = {
-  'prod-001': 'https://images.unsplash.com/photo-1590658268037-6bf12f032f35?w=800&q=80',
-  'prod-002': 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80',
-  'prod-003': 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&q=80',
-  'prod-004': 'https://images.unsplash.com/photo-1507473885765-e6ed057ab6fe?w=800&q=80',
-  'prod-005': 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80',
-  'prod-006': 'https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=800&q=80',
-  'prod-007': 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=800&q=80',
-  'prod-008': 'https://images.unsplash.com/photo-1602928298849-325cec8771c0?w=800&q=80',
-  'prod-009': 'https://images.unsplash.com/photo-1594226801341-41427b4e5c6c?w=800&q=80',
-  'prod-010': 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&q=80',
-  'prod-011': 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80',
-  'prod-012': 'https://images.unsplash.com/photo-1600612253971-422e7f7faeb6?w=800&q=80',
-  'prod-013': 'https://images.unsplash.com/photo-1610824352934-c10d87b700cc?w=800&q=80',
-  'prod-014': 'https://images.unsplash.com/photo-1532375810709-0b1f938333e5?w=800&q=80',
-  'prod-015': 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80',
+  'prod-001': 'https://picsum.photos/seed/earbuds/800/600',
+  'prod-002': 'https://picsum.photos/seed/charger/800/600',
+  'prod-003': 'https://picsum.photos/seed/stand/800/600',
+  'prod-004': 'https://picsum.photos/seed/lamp/800/600',
+  'prod-005': 'https://picsum.photos/seed/bottle/800/600',
+  'prod-006': 'https://picsum.photos/seed/bands/800/600',
+  'prod-007': 'https://picsum.photos/seed/yoga/800/600',
+  'prod-008': 'https://picsum.photos/seed/diffuser/800/600',
+  'prod-009': 'https://picsum.photos/seed/cutting/800/600',
+  'prod-010': 'https://picsum.photos/seed/wallet/800/600',
+  'prod-011': 'https://picsum.photos/seed/sanitizer/800/600',
+  'prod-012': 'https://picsum.photos/seed/steamer/800/600',
+  'prod-013': 'https://picsum.photos/seed/mount/800/600',
+  'prod-014': 'https://picsum.photos/seed/pillow/800/600',
+  'prod-015': 'https://picsum.photos/seed/lights/800/600',
 }
 
 export default function ProductDetailPage() {
